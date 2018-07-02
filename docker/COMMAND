@@ -1,0 +1,1 @@
+docker run --network=oup-docker-network -i -d -t -p 8080:10080 --name peoxy oupproxy:latest

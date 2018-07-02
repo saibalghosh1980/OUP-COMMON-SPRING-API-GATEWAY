@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+      - id: SAP-RFC
+        uri: lb://sap-rfc-template
+        predicates:
+        - Path=/saprfc/**
+        filters:
+        - RewritePath=/saprfc/(?<path>.*), /$\{path}
+  application:
+    name: API-PROXY
+server:
+  port: 8080
+eureka:
+  client:
+    service-url:  
+      defaultZone: http://oupeureka:8761/eureka/
+  instance:
+    prefer-ip-address: true
