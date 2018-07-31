@@ -1,1 +1,1 @@
-docker run --network=oup-docker-network -i -d -t -p 8080:10080 --name peoxy oupproxy:latest
+docker run --restart=always --restart=always -e SPRING_PROFILES_ACTIVE=dev --network=oup-docker-network-dev -i -d -t -p 10080:10080 --name dev-oupintegrationproxy oupproxy:latest

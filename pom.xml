@@ -24,6 +24,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
+		<!-- ADD THESE LINES AS THEY WLL BE REQUIRED FOR CI-CD PROCESS -->
+		<build-profile>dev</build-profile>
+		<docker-host>http://localhost:2375</docker-host>
+		<docker-image-name>oupintegrationproxy</docker-image-name>
+		<!-- ADD THESE LINES AS THEY WLL BE REQUIRED FOR CI-CD PROCESS -->
 	</properties>
 
 	<dependencies>
@@ -73,20 +78,48 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- DOCKERIZE -->
 			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-maven-plugin</artifactId>
 				<configuration>
-					<imageName>oupproxy</imageName>
-					<dockerDirectory>docker</dockerDirectory>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
-					</resources>
+					<dockerHost>${docker-host}</dockerHost>
+					<images>
+						<image>
+							<name>${docker-image-name}</name>
+							<alias>${build-profile}-${docker-image-name}</alias>
+							<build>
+								<from>openjdk:8-jdk-alpine</from>
+								<!-- This is the same ENTRYPOINT used in a Dockerfile -->
+								<entryPoint>
+									<exec>
+										<arg>java</arg>
+										<arg>-Xms512m</arg>
+										<arg>-Xmx2g</arg>
+										<arg>-jar</arg>
+										<arg>/maven/${project.build.finalName}.jar</arg>
+									</exec>
+								</entryPoint>
+								<ports>
+									<port>10080</port>
+								</ports>
+								<!-- <env> <JAVA_HOME>/opt/jdk8</JAVA_HOME> <CATALINA_OPTS>-Djava.security.egd=file:/dev/./urandom</CATALINA_OPTS> 
+									</env> -->
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+							</build>
+						</image>
+					</images>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>resource</goal>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

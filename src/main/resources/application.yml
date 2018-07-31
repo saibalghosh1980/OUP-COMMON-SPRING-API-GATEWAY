@@ -11,13 +11,44 @@ spring:
         - Path=/saprfc/**
         filters:
         - RewritePath=/saprfc/(?<path>.*), /$\{path}
+      - id: PCI-IVR
+        uri: lb://PCI-IVR
+        predicates:
+        - Path=/PCI-IVR/**
+        filters:
+        - RewritePath=/pciivr/(?<path>.*), /$\{path}
+      httpclient:
+        ssl:
+          use-insecure-trust-manager: true
   application:
     name: API-PROXY
 server:
-  port: 8080
+  port: 10080
 eureka:
   client:
-    service-url:  
+    service-url:
       defaultZone: http://oupeureka:8761/eureka/
   instance:
-    prefer-ip-address: true
+    prefer-ip-address: false
+---
+spring:
+  profiles: dev
+server:
+  port: 10080
+eureka:
+  client:
+    service-url:
+      defaultZone: http://dev-oupeureka:8761/eureka/
+  instance:
+   prefer-ip-address: true
+---
+spring:
+  profiles: uat
+server:
+  port: 10080
+eureka:
+  client:
+    service-url:
+      defaultZone: http://uat-oupeureka:8761/eureka/
+  instance:
+   prefer-ip-address: true
