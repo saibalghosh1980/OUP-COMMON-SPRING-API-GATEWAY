@@ -16,7 +16,13 @@ spring:
         predicates:
         - Path=/PCI-IVR/**
         filters:
-        - RewritePath=/pciivr/(?<path>.*), /$\{path}
+        - RewritePath=/PCI-IVR/(?<path>.*), /$\{path}
+      - id: SOCIETY-API-GATEWAY
+        uri: lb://SOCIETY-API-GATEWAY
+        predicates:
+        - Path=/SOCIETY-API-GATEWAY/**
+        filters:
+        - RewritePath=/SOCIETY-API-GATEWAY/(?<path>.*), /$\{path}
       httpclient:
         ssl:
           use-insecure-trust-manager: true
