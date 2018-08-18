@@ -58,3 +58,14 @@ eureka:
       defaultZone: http://uat-oupeureka:8761/eureka/
   instance:
    prefer-ip-address: true
+---
+spring:
+  profiles: prod
+server:
+  port: 10080
+eureka:
+  client:
+    service-url:
+      defaultZone: http://prod-oupeureka:8761/eureka/
+  instance:
+   prefer-ip-address: true
