@@ -23,6 +23,12 @@ spring:
         - Path=/SOCIETY-API-GATEWAY/**
         filters:
         - RewritePath=/SOCIETY-API-GATEWAY/(?<path>.*), /$\{path}
+      - id: SMART-IVR
+        uri: lb://SMART-IVR
+        predicates:
+        - Path=/SMART-IVR/**
+        filters:
+        - RewritePath=/SMART-IVR/(?<path>.*), /$\{path}
       httpclient:
         ssl:
           use-insecure-trust-manager: true
