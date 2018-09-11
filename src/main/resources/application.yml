@@ -3,32 +3,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
-      routes:
-      - id: SAP-RFC
-        uri: lb://sap-rfc-template
-        predicates:
-        - Path=/saprfc/**
-        filters:
-        - RewritePath=/saprfc/(?<path>.*), /$\{path}
-      - id: PCI-IVR
-        uri: lb://PCI-IVR
-        predicates:
-        - Path=/PCI-IVR/**
-        filters:
-        - RewritePath=/PCI-IVR/(?<path>.*), /$\{path}
-      - id: SOCIETY-API-GATEWAY
-        uri: lb://SOCIETY-API-GATEWAY
-        predicates:
-        - Path=/SOCIETY-API-GATEWAY/**
-        filters:
-        - RewritePath=/SOCIETY-API-GATEWAY/(?<path>.*), /$\{path}
-      - id: SMART-IVR
-        uri: lb://SMART-IVR
-        predicates:
-        - Path=/SMART-IVR/**
-        filters:
-        - RewritePath=/SMART-IVR/(?<path>.*), /$\{path}
+          enabled: true     
       httpclient:
         ssl:
           use-insecure-trust-manager: true
@@ -39,9 +14,14 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://oupeureka:8761/eureka/
+      defaultZone: http://10.128.3.135:8761/eureka/
   instance:
     prefer-ip-address: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 ---
 spring:
   profiles: dev
