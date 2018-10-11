@@ -8,11 +8,13 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder.Builder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import com.netflix.discovery.EurekaClient;
 
-@Component
+@Configuration
+@RefreshScope
 public class OUPSpringProxyRouteConfig {
 	Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 	@Autowired
@@ -23,19 +25,17 @@ public class OUPSpringProxyRouteConfig {
 
 	@RefreshScope
 	@Bean
-	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
 		Builder bldr = builder.routes();
 		discoveryClient.getApplications().getRegisteredApplications().forEach(item -> {
 			String applicationName = item.getName();
-			//logger.info("The APP Name Is :"+appName);
-//			/logger.info(applicationName);
 			if (!applicationName.equalsIgnoreCase(appName))
 
 			{
 				logger.info("Binding service: "+applicationName);
 
 				bldr.route(r -> r.path("/" + applicationName + "/**")
-						.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}"))
+						//.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}"))
 						.uri("lb://" + applicationName + "").id(applicationName));
 			}
 		});

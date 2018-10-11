@@ -15,6 +15,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://10.128.3.135:8761/eureka/
+    register-with-eureka: false
   instance:
     prefer-ip-address: false
 management:
