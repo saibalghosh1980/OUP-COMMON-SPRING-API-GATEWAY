@@ -29,16 +29,21 @@ public class OUPSpringProxyRouteConfig {
 		Builder bldr = builder.routes();
 		discoveryClient.getApplications().getRegisteredApplications().forEach(item -> {
 			String applicationName = item.getName();
-			if (!applicationName.equalsIgnoreCase(appName))
+
+			if (!applicationName.equalsIgnoreCase(appName) || !applicationName.equalsIgnoreCase("5250-QTO-HOLDINGS"))
 
 			{
-				logger.info("Binding service: "+applicationName);
+				logger.info("Binding service: " + applicationName);
 
 				bldr.route(r -> r.path("/" + applicationName + "/**")
 						.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}"))
 						.uri("lb://" + applicationName + "").id(applicationName));
 			}
 		});
+
+		bldr.route(r -> r.path("/Q2O/holdings/**")
+				.filters(f -> f.rewritePath("/" + "5250-QTO-HOLDINGS" + "/holdings/(?<path>.*)", "/$\\{path}"))
+				.uri("lb://" + "5250-QTO-HOLDINGS" + "").id("5250-QTO-HOLDINGS"));
 		return bldr.build();
 	}
 }
