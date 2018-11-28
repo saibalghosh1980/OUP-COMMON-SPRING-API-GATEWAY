@@ -30,7 +30,7 @@ public class OUPSpringProxyRouteConfig {
 		discoveryClient.getApplications().getRegisteredApplications().forEach(item -> {
 			String applicationName = item.getName();
 
-			if (!applicationName.equalsIgnoreCase(appName) || !applicationName.equalsIgnoreCase("5250-QTO-HOLDINGS"))
+			if (!applicationName.equalsIgnoreCase(appName))
 
 			{
 				logger.info("Binding service: " + applicationName);
@@ -39,11 +39,7 @@ public class OUPSpringProxyRouteConfig {
 						.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}"))
 						.uri("lb://" + applicationName + "").id(applicationName));
 			}
-		});
-
-		bldr.route(r -> r.path("/Q2O/holdings/**")
-				.filters(f -> f.rewritePath("/" + "5250-QTO-HOLDINGS" + "/holdings/(?<path>.*)", "/$\\{path}"))
-				.uri("lb://" + "5250-QTO-HOLDINGS" + "").id("5250-QTO-HOLDINGS"));
+		});		
 		return bldr.build();
 	}
 }
