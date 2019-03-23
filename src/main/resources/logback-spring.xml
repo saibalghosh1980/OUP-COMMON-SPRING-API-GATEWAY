@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include
+		resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<springProperty scope="context" name="springAppName"
+		source="spring.application.name" />
+	<springProperty scope="context" name="LOGFILENAME"
+		source="spring.application.name" defaultValue="defaultLog" />
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<!-- Log message format -->
+		<encoder>
+			<!--<pattern>%d{HH:mm:ss.SSS} [${springAppName},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] 
+				[%thread] %-5level %logger{36} - %msg%n </pattern> -->
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+	<springProfile name="default">
+		<property name="LOG_HOME" value="C:/SKG/LOGS/${LOGFILENAME}" />
+		<property name="APP_PROILE" value="default" />
+		<property name="LOGSTASH_HOST_PORT" value="localhost:4560" />
+	</springProfile>
+	<springProfile name="dev">
+		<property name="LOG_HOME" value="/logs/${LOGFILENAME}/dev" />
+		<property name="APP_PROILE" value="dev" />
+		<property name="LOGSTASH_HOST_PORT" value="GBOXFESEDEV001.uk.oup.com:4560" />
+	</springProfile>
+	<springProfile name="uat">
+		<property name="LOG_HOME" value="/logs/${LOGFILENAME}/uat" />
+		<property name="APP_PROILE" value="uat" />
+		<property name="LOGSTASH_HOST_PORT" value="GBOXFESEDEV001.uk.oup.com:4560" />
+	</springProfile>
+	<springProfile name="prod">
+		<property name="LOG_HOME" value="/logs/${LOGFILENAME}/prod" />
+		<property name="APP_PROILE" value="prod" />
+		<property name="LOGSTASH_HOST_PORT" value="GBOXFESEDEV001.uk.oup.com:4560" />
+	</springProfile>
+
+	<property name="LOG_FILE_NAME" value="${LOGFILENAME}" />
+
+	<appender name="FILE-AUDIT"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/${LOG_FILE_NAME}.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				${FILE_LOG_PATTERN}
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG_HOME}/archived/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<!-- each file should be at most 100MB, keep 60 days worth of history, 
+				but at most 20GB -->
+			<maxFileSize>1GB</maxFileSize>
+			<maxHistory>60</maxHistory>
+			<totalSizeCap>20GB</totalSizeCap>
+		</rollingPolicy>
+
+	</appender>
+	<!-- Logstash Appender -->
+	<appender name="STASH"
+		class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<!-- remoteHost and port are optional (default values shown) -->
+		<destination>${LOGSTASH_HOST_PORT}</destination>
+
+		<!-- encoder is required -->
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<mdc />
+				<context>
+				</context>
+				<version />
+				<logLevel />
+				<loggerName />
+				<pattern>
+					<pattern>
+						{
+						"appName": "${LOGFILENAME}",
+						"appVersion": "1.0",
+						"appProfile": "${APP_PROILE}"
+						}
+					</pattern>
+				</pattern>
+
+				<threadName />
+
+				<message />
+
+				<logstashMarkers />
+				<arguments />
+
+				<stackTrace />
+			</providers>
+		</encoder>
+	</appender>
+	<!-- ///////////////////////////////////////////////// -->
+	<!-- Setting the root level of logging to INFO -->
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="STASH" />
+	</root>
+	<logger name="org.springframework" level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE-AUDIT" />
+	</logger>
+	<logger name="org.springframework.security" level="DEBUG">
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="org.apache.camel" level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE-AUDIT" />
+	</logger>
+	<logger name="com.sap" level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE-AUDIT" />
+	</logger>
+	<logger name="com.oup" level="DEBUG">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE-AUDIT" />
+	</logger>
+</configuration>

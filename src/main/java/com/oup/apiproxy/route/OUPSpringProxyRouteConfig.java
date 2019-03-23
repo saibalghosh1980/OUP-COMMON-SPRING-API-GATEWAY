@@ -9,7 +9,6 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder.Builder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import com.netflix.discovery.EurekaClient;
 
@@ -40,6 +39,10 @@ public class OUPSpringProxyRouteConfig {
 						.uri("lb://" + applicationName + "").id(applicationName));
 			}
 		});		
+		
+		//bldr.route(r -> r.path("/uam**")
+		//		.filters(f -> f.rewritePath("/uam/(?<path>.*)", "/$\\{path}"))
+		//		.uri("https://127.0.0.1").id("UAM"));
 		return bldr.build();
 	}
 }

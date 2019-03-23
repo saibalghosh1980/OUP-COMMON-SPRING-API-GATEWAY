@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: API-PROXY
+  cloud:
+    vault:
+      host: gboxfamqdev001.uk.oup.com
+      port: 8200
+      fail-fast: true
+      scheme: http
+      authentication: TOKEN
+      token: s.dFFJ04VnoooubSERqkbZGTxG
+      

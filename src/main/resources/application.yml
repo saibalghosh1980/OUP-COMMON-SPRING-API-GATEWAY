@@ -6,11 +6,31 @@ spring:
           enabled: true     
       httpclient:
         ssl:
-          use-insecure-trust-manager: true
+          use-insecure-trust-manager: true   
   application:
     name: API-PROXY
+  security:
+    user:
+      name: apiuser
+      password: apiuser
+      roles:
+      - ADMIN
+      - USER
+  datasource:
+    url: jdbc:mysql://GBSMIXDEV01.UK.OUP.COM:3306/DB_APISECURITY
+    hikari:
+      connection-init-sql: SELECT SYSDATE()
+      maximum-pool-size: 10
+      minimum-idle: 5
+    #username: apisecurity
+    #password: Passw0rd@1234    
 server:
-  port: 10080
+   port: 8080
+   #ssl:
+    #  key-store: classpath:springcloudapigtwy.p12
+    #  key-store-password: User@1234
+    #  keyStoreType: PKCS12
+    #  keyAlias: springaloudapigateway
 eureka:
   client:
     service-url:
