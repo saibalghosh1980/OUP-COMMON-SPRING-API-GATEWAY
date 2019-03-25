@@ -1,6 +1,6 @@
 spring:
   application:
-    name: API-PROXY
+    name: apiproxy
   cloud:
     vault:
       host: gboxfamqdev001.uk.oup.com
