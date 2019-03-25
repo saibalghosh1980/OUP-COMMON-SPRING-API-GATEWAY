@@ -1,11 +1,10 @@
 package com.oup.apiproxy.config;
 
-import java.util.ArrayList;
-
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -18,15 +17,11 @@ import org.springframework.security.config.annotation.authentication.configurers
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.AuthorizeExchangeSpec;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-import com.netflix.discovery.EurekaClient;
 import com.oup.apiproxy.bl.UserRoleBL;
 import com.oup.apiproxy.dto.Role;
 
@@ -51,7 +46,7 @@ public class SecurityConfig {
 	ApplicationContext context;
 
 	@Autowired
-	private EurekaClient discoveryClient;
+	private DiscoveryClient discoveryClient;
 
 	@Autowired
 	@Qualifier("springManagedUserBL")
@@ -85,6 +80,7 @@ public class SecurityConfig {
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
 				.pathMatchers("/actuator/**").permitAll() // NO SECURITY FOR ACTUATOR ENDPOINT
 				.pathMatchers("**/actuator/**").permitAll()
+				.pathMatchers("/health/**").permitAll()
 				// .pathMatchers("/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				// .pathMatchers("**/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				.pathMatchers("/uam/**").hasAuthority("ROLE_UAM_ADMIN");
@@ -99,21 +95,21 @@ public class SecurityConfig {
 			e.printStackTrace();
 		}
 		
-		discoveryClient.getApplications().getRegisteredApplications().parallelStream().forEach(item -> {
-			authorizeExchangeSpec.pathMatchers("/" + item.getName() + "/actuator/**").permitAll();
-			authorizeExchangeSpec.pathMatchers("/" + item.getName() + "/**")
-					.hasAuthority("ROLE_" + item.getName().toUpperCase());
+		discoveryClient.getServices().parallelStream().forEach(item -> {
+			authorizeExchangeSpec.pathMatchers("/" + item + "/actuator/**").permitAll();
+			authorizeExchangeSpec.pathMatchers("/" + item + "/**")
+					.hasAuthority("ROLE_" + item.toUpperCase());
 			try {
 				userRoleBL.addUserIfDoesNotExists(
-						new com.oup.apiproxy.dto.User("USER_" + item.getName().toUpperCase(), "Passw0rd@123"));
+						new com.oup.apiproxy.dto.User("USER_" + item.toUpperCase(), "Passw0rd@123"));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 			try {
 				userRoleBL.addRoleForUserIfDoesNotExists(
-						new Role("USER_" + item.getName().toUpperCase(), "ROLE_" + item.getName().toUpperCase()));
+						new Role("USER_" + item.toUpperCase(), "ROLE_" + item.toUpperCase()));
 				System.out.println("User and Role added with default pwd Passw0rd@123 ('USER_"
-						+ item.getName().toUpperCase() + "','ROLE_" + item.getName().toUpperCase() + "');");
+						+ item.toUpperCase() + "','ROLE_" + item.toUpperCase() + "');");
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

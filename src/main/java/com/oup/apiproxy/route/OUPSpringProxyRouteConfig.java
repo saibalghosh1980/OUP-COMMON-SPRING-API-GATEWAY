@@ -3,6 +3,7 @@ package com.oup.apiproxy.route;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -10,14 +11,12 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder.Build
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.netflix.discovery.EurekaClient;
-
 @Configuration
 @RefreshScope
 public class OUPSpringProxyRouteConfig {
 	Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 	@Autowired
-	private EurekaClient discoveryClient;
+	private DiscoveryClient discoveryClient;
 
 	@Value("${spring.application.name}")
 	private String appName;
@@ -26,8 +25,9 @@ public class OUPSpringProxyRouteConfig {
 	@Bean
 	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
 		Builder bldr = builder.routes();
-		discoveryClient.getApplications().getRegisteredApplications().forEach(item -> {
-			String applicationName = item.getName();
+
+		discoveryClient.getServices().forEach(item -> {
+			String applicationName = item;
 
 			if (!applicationName.equalsIgnoreCase(appName))
 
@@ -36,13 +36,13 @@ public class OUPSpringProxyRouteConfig {
 
 				bldr.route(r -> r.path("/" + applicationName + "/**")
 						.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}"))
-						.uri("lb://" + applicationName + "").id(applicationName));
+						.uri("http://" + applicationName + "").id(applicationName));
 			}
-		});		
-		
-		//bldr.route(r -> r.path("/uam**")
-		//		.filters(f -> f.rewritePath("/uam/(?<path>.*)", "/$\\{path}"))
-		//		.uri("https://127.0.0.1").id("UAM"));
+		});
+
+		// bldr.route(r -> r.path("/uam**")
+		// .filters(f -> f.rewritePath("/uam/(?<path>.*)", "/$\\{path}"))
+		// .uri("https://127.0.0.1").id("UAM"));
 		return bldr.build();
 	}
 }

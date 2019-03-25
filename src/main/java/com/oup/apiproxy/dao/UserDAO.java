@@ -1,7 +1,7 @@
 package com.oup.apiproxy.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.github.andrewoma.dexx.collection.ArrayList;
 import com.oup.apiproxy.dto.Role;
 import com.oup.apiproxy.dto.User;;
 
@@ -89,7 +88,7 @@ public class UserDAO {
 			Role item=new Role();
 			item.setUserName(userName);
 			item.setRole((String)row.get("authority"));
-			allRoles.append(item);
+			allRoles.add(item);
 		}
 		return allRoles;
 	}
