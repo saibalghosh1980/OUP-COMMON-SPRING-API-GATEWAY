@@ -80,6 +80,8 @@ public class SecurityConfig {
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
 				.pathMatchers("/actuator/**").permitAll() // NO SECURITY FOR ACTUATOR ENDPOINT
 				.pathMatchers("**/actuator/**").permitAll()
+				.pathMatchers("**/prometheus/**").permitAll()
+				.pathMatchers("**/refresh/**").permitAll()
 				.pathMatchers("/health/**").permitAll()
 				// .pathMatchers("/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				// .pathMatchers("**/actuator/**").hasAuthority("ROLE_ACTUATOR")
@@ -99,12 +101,14 @@ public class SecurityConfig {
 			authorizeExchangeSpec.pathMatchers("/" + item + "/actuator/**").permitAll();
 			authorizeExchangeSpec.pathMatchers("/" + item + "/**")
 					.hasAuthority("ROLE_" + item.toUpperCase());
+			//------------------Add user if not there for this endpoint------------------------------
 			try {
 				userRoleBL.addUserIfDoesNotExists(
 						new com.oup.apiproxy.dto.User("USER_" + item.toUpperCase(), "Passw0rd@123"));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+			//------------------Add Role if not there for this endpoint------------------------------
 			try {
 				userRoleBL.addRoleForUserIfDoesNotExists(
 						new Role("USER_" + item.toUpperCase(), "ROLE_" + item.toUpperCase()));
