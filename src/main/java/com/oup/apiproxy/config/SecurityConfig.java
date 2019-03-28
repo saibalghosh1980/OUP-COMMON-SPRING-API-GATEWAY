@@ -99,6 +99,9 @@ public class SecurityConfig {
 		
 		discoveryClient.getServices().parallelStream().forEach(item -> {
 			authorizeExchangeSpec.pathMatchers("/" + item + "/actuator/**").permitAll();
+			authorizeExchangeSpec.pathMatchers("/" + item + "/prometheus/**").permitAll();
+			authorizeExchangeSpec.pathMatchers("/" + item + "/refresh/**").permitAll();
+			authorizeExchangeSpec.pathMatchers("/" + item + "/env/**").permitAll();
 			authorizeExchangeSpec.pathMatchers("/" + item + "/**")
 					.hasAuthority("ROLE_" + item.toUpperCase());
 			//------------------Add user if not there for this endpoint------------------------------
