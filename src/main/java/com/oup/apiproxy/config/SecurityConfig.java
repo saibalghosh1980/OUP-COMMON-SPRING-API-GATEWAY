@@ -109,7 +109,7 @@ public class SecurityConfig {
 		io.kubernetes.client.Configuration.setDefaultApiClient(client);
 		CoreV1Api api = new CoreV1Api();
 		api.listNamespacedService(environment.getActiveProfiles()[0], null, null, null, null, null, null, null, null,
-				null).getItems().parallelStream().forEach(svcItem -> {
+				null).getItems().forEach(svcItem -> {
 					String item = svcItem.getMetadata().getName();
 					authorizeExchangeSpec.pathMatchers("/" + item + "/actuator/**").permitAll();
 					authorizeExchangeSpec.pathMatchers("/" + item + "/prometheus/**").permitAll();
