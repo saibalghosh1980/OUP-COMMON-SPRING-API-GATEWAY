@@ -49,7 +49,7 @@
 		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-kubernetes-discovery -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-kubernetes</artifactId>
+			<artifactId>spring-cloud-kubernetes-discovery</artifactId>
 			<version>1.0.1.RELEASE</version>
 		</dependency>
 		<dependency>
