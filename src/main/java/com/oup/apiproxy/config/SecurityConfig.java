@@ -1,14 +1,18 @@
 package com.oup.apiproxy.config;
 
+import java.io.IOException;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder.Builder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,6 +28,11 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import com.oup.apiproxy.bl.UserRoleBL;
 import com.oup.apiproxy.dto.Role;
+
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.ApiException;
+import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.util.Config;
 
 @Configuration
 @RefreshScope
@@ -43,10 +52,12 @@ public class SecurityConfig {
 	private DataSource dataSource;
 
 	@Autowired
-	ApplicationContext context;
+	private Environment environment;
 
 	@Autowired
-	private DiscoveryClient discoveryClient;
+	ApplicationContext context;
+
+	
 
 	@Autowired
 	@Qualifier("springManagedUserBL")
@@ -76,53 +87,54 @@ public class SecurityConfig {
 
 	@RefreshScope
 	@Bean
-	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws IOException, ApiException {
 
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
 				.pathMatchers("/actuator/**").permitAll() // NO SECURITY FOR ACTUATOR ENDPOINT
-				.pathMatchers("**/actuator/**").permitAll()
-				.pathMatchers("**/prometheus/**").permitAll()
-				.pathMatchers("**/refresh/**").permitAll()
-				.pathMatchers("/health/**").permitAll()
+				.pathMatchers("**/actuator/**").permitAll().pathMatchers("**/prometheus/**").permitAll()
+				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll()
 				// .pathMatchers("/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				// .pathMatchers("**/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				.pathMatchers("/uam/**").hasAuthority("ROLE_UAM_ADMIN");
-        
+
 		try {
-			userRoleBL.addUserIfDoesNotExists(
-					new com.oup.apiproxy.dto.User("USER_UAM_ADMIN", "Passw0rd@123"));
-			userRoleBL.addRoleForUserIfDoesNotExists(
-					new Role("USER_UAM_ADMIN", "ROLE_UAM_ADMIN"));
+			userRoleBL.addUserIfDoesNotExists(new com.oup.apiproxy.dto.User("USER_UAM_ADMIN", "Passw0rd@123"));
+			userRoleBL.addRoleForUserIfDoesNotExists(new Role("USER_UAM_ADMIN", "ROLE_UAM_ADMIN"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		discoveryClient.getServices().parallelStream().forEach(item -> {
-			authorizeExchangeSpec.pathMatchers("/" + item + "/actuator/**").permitAll();
-			authorizeExchangeSpec.pathMatchers("/" + item + "/prometheus/**").permitAll();
-			authorizeExchangeSpec.pathMatchers("/" + item + "/refresh/**").permitAll();
-			authorizeExchangeSpec.pathMatchers("/" + item + "/env/**").permitAll();
-			authorizeExchangeSpec.pathMatchers("/" + item + "/**")
-					.hasAuthority("ROLE_" + item.toUpperCase());
-			//------------------Add user if not there for this endpoint------------------------------
-			try {
-				userRoleBL.addUserIfDoesNotExists(
-						new com.oup.apiproxy.dto.User("USER_" + item.toUpperCase(), "Passw0rd@123"));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			//------------------Add Role if not there for this endpoint------------------------------
-			try {
-				userRoleBL.addRoleForUserIfDoesNotExists(
-						new Role("USER_" + item.toUpperCase(), "ROLE_" + item.toUpperCase()));
-				System.out.println("User and Role added with default pwd Passw0rd@123 ('USER_"
-						+ item.toUpperCase() + "','ROLE_" + item.toUpperCase() + "');");
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
 
-		});
+		ApiClient client = Config.defaultClient();
+		io.kubernetes.client.Configuration.setDefaultApiClient(client);
+		CoreV1Api api = new CoreV1Api();
+		api.listNamespacedService(environment.getActiveProfiles()[0], null, null, null, null, null, null, null, null,
+				null).getItems().parallelStream().forEach(svcItem -> {
+					String item = svcItem.getMetadata().getName();
+					authorizeExchangeSpec.pathMatchers("/" + item + "/actuator/**").permitAll();
+					authorizeExchangeSpec.pathMatchers("/" + item + "/prometheus/**").permitAll();
+					authorizeExchangeSpec.pathMatchers("/" + item + "/refresh/**").permitAll();
+					authorizeExchangeSpec.pathMatchers("/" + item + "/env/**").permitAll();
+					authorizeExchangeSpec.pathMatchers("/" + item + "/**").hasAuthority("ROLE_" + item.toUpperCase());
+					// ------------------Add user if not there for this
+					// endpoint------------------------------
+					try {
+						userRoleBL.addUserIfDoesNotExists(
+								new com.oup.apiproxy.dto.User("USER_" + item.toUpperCase(), "Passw0rd@123"));
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					// ------------------Add Role if not there for this
+					// endpoint------------------------------
+					try {
+						userRoleBL.addRoleForUserIfDoesNotExists(
+								new Role("USER_" + item.toUpperCase(), "ROLE_" + item.toUpperCase()));
+						System.out.println("User and Role added with default pwd Passw0rd@123 ('USER_"
+								+ item.toUpperCase() + "','ROLE_" + item.toUpperCase() + "');");
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				});
 
 		return authorizeExchangeSpec.anyExchange().authenticated().and().httpBasic().and().build();
 	}
