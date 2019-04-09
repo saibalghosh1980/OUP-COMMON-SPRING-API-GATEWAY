@@ -9,3 +9,6 @@ spring:
       scheme: http
       authentication: TOKEN
       token: s.dFFJ04VnoooubSERqkbZGTxG
+      kv:
+        enabled: true
+      
