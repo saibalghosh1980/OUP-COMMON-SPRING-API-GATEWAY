@@ -57,6 +57,12 @@ eureka:
 ---
 spring:
   profiles: uat
+  datasource:
+    url: jdbc:mysql://GBSMIXUAT01.UK.OUP.COM:3306/DB_APISECURITY
+    hikari:
+      connection-init-sql: SELECT SYSDATE()
+      maximum-pool-size: 10
+      minimum-idle: 5 
 server:
   port: 8080
 eureka:

@@ -74,6 +74,7 @@ public class SecurityConfig {
 
 	}
 
+	@RefreshScope
 	@Bean
 	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
 
