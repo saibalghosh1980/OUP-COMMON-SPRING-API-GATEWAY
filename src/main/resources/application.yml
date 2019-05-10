@@ -23,12 +23,12 @@ spring:
     #username: apisecurity
     #password: Passw0rd@1234    
 server:
-   port: 8080
-   #ssl:
-    #  key-store: classpath:springcloudapigtwy.p12
-    #  key-store-password: User@1234
-    #  keyStoreType: PKCS12
-    #  keyAlias: springaloudapigateway
+   port: 443
+   ssl:
+      key-store: classpath:api-dev-internal.jks
+      key-store-password: User@1234
+      #keyStoreType: PKCS12
+      keyAlias: api-dev-internal
 eureka:
   client:
     service-url:
@@ -45,7 +45,12 @@ management:
 spring:
   profiles: dev
 server:
-  port: 8080
+   port: 443
+   ssl:
+      key-store: classpath:api-dev-internal.jks
+      key-store-password: User@1234
+      #keyStoreType: PKCS12
+      keyAlias: api-dev-internal
 eureka:
   client:
     service-url:
