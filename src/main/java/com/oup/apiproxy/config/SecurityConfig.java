@@ -92,7 +92,7 @@ public class SecurityConfig {
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
 				.pathMatchers("/actuator/**").permitAll() // NO SECURITY FOR ACTUATOR ENDPOINT
 				.pathMatchers("**/actuator/**").permitAll().pathMatchers("**/prometheus/**").permitAll()
-				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll()
+				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll().pathMatchers("**/hawtio/**").permitAll()
 				// .pathMatchers("/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				// .pathMatchers("**/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				.pathMatchers("/uam/**").hasAuthority("ROLE_UAM_ADMIN");
@@ -115,6 +115,8 @@ public class SecurityConfig {
 					authorizeExchangeSpec.pathMatchers("/" + item + "/prometheus/**").permitAll();
 					authorizeExchangeSpec.pathMatchers("/" + item + "/refresh/**").permitAll();
 					authorizeExchangeSpec.pathMatchers("/" + item + "/env/**").permitAll();
+					authorizeExchangeSpec.pathMatchers("/" + item + "/hawtio/**").permitAll();
+					authorizeExchangeSpec.pathMatchers("/" + item + "**/jolokia/**").permitAll();
 					authorizeExchangeSpec.pathMatchers("/" + item + "/**").hasAuthority("ROLE_" + item.toUpperCase());
 					// ------------------Add user if not there for this
 					// endpoint------------------------------
