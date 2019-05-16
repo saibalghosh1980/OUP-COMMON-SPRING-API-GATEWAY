@@ -67,7 +67,12 @@ spring:
       maximum-pool-size: 10
       minimum-idle: 5 
 server:
-  port: 8080
+   port: 443
+   ssl:
+      key-store: classpath:api-uat-internal.jks
+      key-store-password: User@1234
+      #keyStoreType: PKCS12
+      keyAlias: api-uat-internal
 eureka:
   client:
     service-url:
