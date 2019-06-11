@@ -100,7 +100,7 @@
 	</appender>
 	<!-- ///////////////////////////////////////////////// -->
 	<!-- Setting the root level of logging to INFO -->
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="STASH" />
 	</root>
