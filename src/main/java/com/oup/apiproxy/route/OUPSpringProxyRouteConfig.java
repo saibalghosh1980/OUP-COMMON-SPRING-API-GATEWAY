@@ -47,7 +47,8 @@ public class OUPSpringProxyRouteConfig {
 						logger.info("Binding service: " + applicationName);
 
 						bldr.route(r -> r.path("/" + applicationName + "/**")
-								.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}"))
+								
+								.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}").removeRequestHeader("Expect"))								
 								.uri("http://" + applicationName + "").id(applicationName));
 					}
 				});
