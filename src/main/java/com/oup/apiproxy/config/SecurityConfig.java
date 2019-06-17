@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.JdbcUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.AuthorizeExchangeSpec;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -57,8 +58,6 @@ public class SecurityConfig {
 	@Autowired
 	ApplicationContext context;
 
-	
-
 	@Autowired
 	@Qualifier("springManagedUserBL")
 	private UserRoleBL userRoleBL;
@@ -85,6 +84,11 @@ public class SecurityConfig {
 
 	}
 
+	@Bean
+	public void configure(WebSecurity webSecurity) throws Exception {
+		webSecurity.ignoring().regexMatchers(".*\\?wsdl");
+	}
+
 	@RefreshScope
 	@Bean
 	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws IOException, ApiException {
@@ -92,7 +96,8 @@ public class SecurityConfig {
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
 				.pathMatchers("/actuator/**").permitAll() // NO SECURITY FOR ACTUATOR ENDPOINT
 				.pathMatchers("**/actuator/**").permitAll().pathMatchers("**/prometheus/**").permitAll()
-				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll().pathMatchers("**/hawtio/**").permitAll()
+				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll()
+				.pathMatchers("**/hawtio/**").permitAll()
 				// .pathMatchers("/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				// .pathMatchers("**/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				.pathMatchers("/uam/**").hasAuthority("ROLE_UAM_ADMIN");
