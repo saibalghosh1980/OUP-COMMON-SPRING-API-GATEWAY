@@ -91,6 +91,7 @@ public class SecurityConfig {
 
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
 				.pathMatchers("**/*wsdl").permitAll()
+				.pathMatchers("/**/*wsdl").permitAll()
 				.pathMatchers("/actuator/**").permitAll() // NO SECURITY FOR ACTUATOR ENDPOINT
 				.pathMatchers("**/actuator/**").permitAll().pathMatchers("**/prometheus/**").permitAll()
 				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll()
