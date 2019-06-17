@@ -83,17 +83,14 @@ public class SecurityConfig {
 		return new ReactiveAuthenticationManagerAdapter(authenticationBuilder.build());
 
 	}
-
-	@Bean
-	public void configure(WebSecurity webSecurity) throws Exception {
-		webSecurity.ignoring().regexMatchers(".*\\?wsdl");
-	}
+	
 
 	@RefreshScope
 	@Bean
 	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws IOException, ApiException {
 
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
+				.pathMatchers("**/*wsdl").permitAll()
 				.pathMatchers("/actuator/**").permitAll() // NO SECURITY FOR ACTUATOR ENDPOINT
 				.pathMatchers("**/actuator/**").permitAll().pathMatchers("**/prometheus/**").permitAll()
 				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll()
