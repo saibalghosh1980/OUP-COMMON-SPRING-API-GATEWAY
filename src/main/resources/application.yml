@@ -101,6 +101,3 @@ eureka:
       defaultZone: http://prod-oupeureka:8761/eureka/
   instance:
    prefer-ip-address: true
-azure:
-  application-insights:
-    instrumentation-key: d87059b2-8b81-46ce-8a2b-e0152fa952a6
