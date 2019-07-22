@@ -23,17 +23,20 @@
 	<springProfile name="dev">
 		<property name="LOG_HOME" value="/logs/${LOGFILENAME}/dev" />
 		<property name="APP_PROILE" value="dev" />
-		<property name="LOGSTASH_HOST_PORT" value="GBOXFESEDEV001.uk.oup.com:4560" />
+		<property name="LOGSTASH_HOST_PORT"
+			value="GBOXFESEDEV001.uk.oup.com:4560" />
 	</springProfile>
 	<springProfile name="uat">
 		<property name="LOG_HOME" value="/logs/${LOGFILENAME}/uat" />
 		<property name="APP_PROILE" value="uat" />
-		<property name="LOGSTASH_HOST_PORT" value="GBOXFESEDEV001.uk.oup.com:4560" />
+		<property name="LOGSTASH_HOST_PORT"
+			value="GBOXFESEDEV001.uk.oup.com:4560" />
 	</springProfile>
 	<springProfile name="prod">
 		<property name="LOG_HOME" value="/logs/${LOGFILENAME}/prod" />
 		<property name="APP_PROILE" value="prod" />
-		<property name="LOGSTASH_HOST_PORT" value="GBOXFESEDEV001.uk.oup.com:4560" />
+		<property name="LOGSTASH_HOST_PORT"
+			value="GBOXFESEPRD001.uk.oup.com:4560" />
 	</springProfile>
 
 	<property name="LOG_FILE_NAME" value="${LOGFILENAME}" />
@@ -99,10 +102,14 @@
 		</encoder>
 	</appender>
 	<!-- ///////////////////////////////////////////////// -->
+	<appender name="aiAppender"
+		class="com.microsoft.applicationinsights.logback.ApplicationInsightsAppender">
+	</appender>
 	<!-- Setting the root level of logging to INFO -->
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="STASH" />
+		<appender-ref ref="aiAppender" />
 	</root>
 	<logger name="org.springframework" level="INFO">
 		<appender-ref ref="STDOUT" />
