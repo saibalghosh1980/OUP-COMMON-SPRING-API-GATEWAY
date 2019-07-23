@@ -103,7 +103,7 @@
 	</appender>
 	<!-- ///////////////////////////////////////////////// -->
 	<appender name="aiAppender" 
-      class="com.oup.ms.appinsight.logback.AppInSightLogBackOUP.OUPApplicationInsightsAppender">
+      class="com.microsoft.applicationinsights.logback.ApplicationInsightsAppender">
         <instrumentationKey>d87059b2-8b81-46ce-8a2b-e0152fa952a6</instrumentationKey>
     </appender>
 	<!-- Setting the root level of logging to INFO -->
