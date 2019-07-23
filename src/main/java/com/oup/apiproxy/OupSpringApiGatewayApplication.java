@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan("com.oup")
 public class OupSpringApiGatewayApplication {
 
 	public static void main(String[] args) {
