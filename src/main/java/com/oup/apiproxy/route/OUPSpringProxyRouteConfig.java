@@ -33,6 +33,7 @@ public class OUPSpringProxyRouteConfig {
 	@RefreshScope
 	@Bean
 	public RouteLocator routeLocator(RouteLocatorBuilder builder) throws IOException, ApiException {
+		logger.info("RELOADING ROUTES");
 		Builder bldr = builder.routes();
 		ApiClient client = Config.defaultClient();
 		io.kubernetes.client.Configuration.setDefaultApiClient(client);
