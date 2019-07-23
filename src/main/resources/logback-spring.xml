@@ -73,7 +73,7 @@
 		<!-- encoder is required -->
 		<encoder
 			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-			<providers>
+			<providers>			     
 				<mdc />
 				<context>
 				</context>
@@ -103,7 +103,7 @@
 	</appender>
 	<!-- ///////////////////////////////////////////////// -->
 	<appender name="aiAppender" 
-      class="com.microsoft.applicationinsights.logback.ApplicationInsightsAppender">
+      class="com.oup.ms.appinsight.logback.AppInSightLogBackOUP.OUPApplicationInsightsAppender">
         <instrumentationKey>d87059b2-8b81-46ce-8a2b-e0152fa952a6</instrumentationKey>
     </appender>
 	<!-- Setting the root level of logging to INFO -->
