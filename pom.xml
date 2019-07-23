@@ -105,7 +105,6 @@
 			<groupId>com.oup.ms.appinsight.logback</groupId>
 			<artifactId>AppInSightLogBackOUP</artifactId>
 			<version>v-1.0</version>
-			<scope>system</scope>
 			<systemPath>/MISC/AppInSightLogBackOUP-v-1.0.jar</systemPath>
 		</dependency>
 	</dependencies>
