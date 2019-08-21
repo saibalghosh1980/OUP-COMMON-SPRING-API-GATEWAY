@@ -57,7 +57,7 @@ public class OUPSpringProxyRouteConfig {
 						//----------------------------------------------------------------------------------------
 						bldr.route(r -> r.path("/apigw/" + applicationName + "/**")
 
-								.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}")
+								.filters(f -> f.rewritePath("/apigw/" + applicationName + "/(?<path>.*)", "/$\\{path}")
 										.removeRequestHeader("Expect"))
 								.uri("http://" + applicationName + "").id(applicationName+"_apigw"));
 						//----------------------------------------------------------------------------------------
