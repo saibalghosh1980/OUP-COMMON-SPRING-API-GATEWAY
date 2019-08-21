@@ -59,7 +59,7 @@ public class OUPSpringProxyRouteConfig {
 
 								.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}")
 										.removeRequestHeader("Expect"))
-								.uri("http://" + applicationName + "").id(applicationName));
+								.uri("http://" + applicationName + "").id(applicationName+"_apigw"));
 						//----------------------------------------------------------------------------------------
 						//End: Build route explicitly to be called from api gateway						
 						//----------------------------------------------------------------------------------------
