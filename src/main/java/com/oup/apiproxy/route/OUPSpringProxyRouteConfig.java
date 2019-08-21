@@ -23,7 +23,7 @@ import io.kubernetes.client.util.Config;
 @RefreshScope
 public class OUPSpringProxyRouteConfig {
 	Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
-	
+
 	@Autowired
 	private Environment environment;
 
@@ -48,27 +48,25 @@ public class OUPSpringProxyRouteConfig {
 						logger.info("Binding service: " + applicationName);
 
 						bldr.route(r -> r.path("/" + applicationName + "/**")
-								
-								.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}").removeRequestHeader("Expect"))								
+
+								.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}")
+										.removeRequestHeader("Expect"))
 								.uri("http://" + applicationName + "").id(applicationName));
+						//----------------------------------------------------------------------------------------
+						//Start: Build route explicitly to be called from api gateway						
+						//----------------------------------------------------------------------------------------
+						bldr.route(r -> r.path("/apigw/" + applicationName + "/**")
+
+								.filters(f -> f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}")
+										.removeRequestHeader("Expect"))
+								.uri("http://" + applicationName + "").id(applicationName));
+						//----------------------------------------------------------------------------------------
+						//End: Build route explicitly to be called from api gateway						
+						//----------------------------------------------------------------------------------------
+
 					}
 				});
-		/*
-		 * discoveryClient.getServices().forEach(item -> { String applicationName =
-		 * item;
-		 * 
-		 * if (!applicationName.equalsIgnoreCase(appName))
-		 * 
-		 * { logger.info("Binding service: " + applicationName);
-		 * 
-		 * bldr.route(r -> r.path("/" + applicationName + "/**") .filters(f ->
-		 * f.rewritePath("/" + applicationName + "/(?<path>.*)", "/$\\{path}"))
-		 * .uri("http://" + applicationName + "").id(applicationName)); } });
-		 */
-
-		// bldr.route(r -> r.path("/uam**")
-		// .filters(f -> f.rewritePath("/uam/(?<path>.*)", "/$\\{path}"))
-		// .uri("https://127.0.0.1").id("UAM"));
+		
 		return bldr.build();
 	}
 }

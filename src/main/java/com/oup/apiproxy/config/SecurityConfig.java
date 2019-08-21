@@ -88,7 +88,7 @@ public class SecurityConfig {
 	@RefreshScope
 	@Bean
 	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws IOException, ApiException {
-
+		
 		AuthorizeExchangeSpec authorizeExchangeSpec = http.csrf().disable().authorizeExchange()
 				.pathMatchers("**/*wsdl").permitAll()
 				.pathMatchers("/**/*wsdl").permitAll()
@@ -96,6 +96,7 @@ public class SecurityConfig {
 				.pathMatchers("**/actuator/**").permitAll().pathMatchers("**/prometheus/**").permitAll()
 				.pathMatchers("**/refresh/**").permitAll().pathMatchers("/health/**").permitAll()
 				.pathMatchers("**/hawtio/**").permitAll()
+				.pathMatchers("/apigw/**").permitAll()
 				// .pathMatchers("/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				// .pathMatchers("**/actuator/**").hasAuthority("ROLE_ACTUATOR")
 				.pathMatchers("/uam/**").hasAuthority("ROLE_UAM_ADMIN");
