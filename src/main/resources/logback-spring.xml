@@ -102,15 +102,15 @@
 		</encoder>
 	</appender>
 	<!-- ///////////////////////////////////////////////// -->
-	<appender name="aiAppender" 
+	<!-- <appender name="aiAppender" 
       class="com.oup.common.ms.appinsight.logback.AppInSightLogBackOUP.OUPApplicationInsightsAppender">
         <instrumentationKey>d87059b2-8b81-46ce-8a2b-e0152fa952a6</instrumentationKey>
-    </appender>
+    </appender> -->
 	<!-- Setting the root level of logging to INFO -->
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="STASH" />
-		<appender-ref ref="aiAppender" />
+		<!-- <appender-ref ref="aiAppender" /> -->
 	</root>
 	<logger name="org.springframework" level="INFO">
 		<appender-ref ref="STDOUT" />
